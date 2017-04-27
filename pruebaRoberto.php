@@ -9,11 +9,6 @@ $objPHPExcel = new PHPExcel();
 /* * ***** */
 
 /*Conexion a la base de datos*/
-function conectar() {
-    $pdo = new PDO("sqlsrv:Server=SQLDESAR;Database=Desar_04_CCM_Sistema;ConnectionPooling=0", "tomase", "lptom8432");
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    return $pdo;
-}
 /****************************/
 
 /*OBTENCION DE LOS DATOS*/
