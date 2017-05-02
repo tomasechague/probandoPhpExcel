@@ -1,7 +1,7 @@
 <?php
 
-$direccion = '138 1512';
-$localidad = 'LA PLAT';
+$direccion = 'AYACUCHO 3473';
+$localidad = 'LANUS ESTE';
 $pais = 'Argentina';
 $direccion .= ' ' . $localidad . ' ' . $pais;
 
@@ -24,7 +24,7 @@ $direccion = str_replace(' ', '%20', $direccion);
 
 
 
-$json = file_get_contents('http://maps.googleapis.com/maps/api/geocode/json?address=Calle%20' . $direccion);
+$json = @file_get_contents('http://maps.googleapis.com/maps/api/geocode/json?address=Calle%20' . $direccion);
 $obj = json_decode($json);
 //print_r($obj->results[0]->address_components[0]->long_name);
 //die();
