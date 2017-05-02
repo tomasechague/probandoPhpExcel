@@ -55,22 +55,28 @@ $i = 1;
 //Establezco a J en 2 para empezar a escribir debajo de las cabeceras
 $j = 2;
 foreach ($options as $option) {
+    //Como son 3 tablas, obtengo la tercera que se que esta todo completo
     if ($i == 3) {
-        //$trs = $option->getElementsByTagName('tr')->item(0)->nodeValue;
+        //obtengo las filas de la tabla que necesito
         $trs = $option->getElementsByTagName('tr');
+        //Recorro las filas
         foreach ($trs as $tr) {
+            //obtengo las columnas de una fila
             $tds = $tr->getElementsByTagName('td');
+            //Si la columna tiene algo entonces la trabajo, sino no
             if (isset($tds->item(0)->nodeValue)) {
                 $codigoArea = $tds->item(0)->nodeValue; //codigo de area
                 $provincia = $tds->item(1)->nodeValue; //provincia
+                //Separo las localidades en un array ya que estan escritas con ','
                 $localidades = explode(',', $tds->item(2)->nodeValue); //localidades
+                //Recorro todas las localidades que obtuve para ese codigo de area
                 foreach ($localidades as $localidad) {
                     /* ESCRIBO EL EXCEL */
                     $objPHPExcel->setActiveSheetIndex(0);
                     $objPHPExcel->getActiveSheet()->SetCellValue('A' . $j, $codigoArea);
                     $objPHPExcel->getActiveSheet()->SetCellValue('B' . $j, $provincia);
                     $objPHPExcel->getActiveSheet()->SetCellValue('C' . $j, $localidad);
-                    /*                     * *************** */
+                    /***************** */
                     $j++;
                 }
             }
