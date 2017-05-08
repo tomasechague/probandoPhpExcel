@@ -1,7 +1,8 @@
 <?php
 
 set_time_limit(1200);
-
+ini_set('upload_max_filesize', '50M');
+ini_set('max_file_uploads', '50M');
 /* Uso Excel para exportar lo obtenido */
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'PHPExcel-1.8' . DIRECTORY_SEPARATOR . 'Classes' . DIRECTORY_SEPARATOR . 'PHPExcel.php';
 include __DIR__ . DIRECTORY_SEPARATOR . 'PHPExcel-1.8' . DIRECTORY_SEPARATOR . 'Classes' . DIRECTORY_SEPARATOR . 'PHPExcel' . DIRECTORY_SEPARATOR . 'Reader' . DIRECTORY_SEPARATOR . 'Excel2007.php';
@@ -9,7 +10,7 @@ include __DIR__ . DIRECTORY_SEPARATOR . 'PHPExcel-1.8' . DIRECTORY_SEPARATOR . '
 
 
 $excelReader = new PHPExcel_Reader_Excel2007();
-$objPHPExcel = $excelReader->load('Excels/probandoApiLocation.xlsx');
+$objPHPExcel = $excelReader->load('Excels/excel_padron_determinar_localidad.xlsx');
 /* * ***** */
 
 //Obtengo la hoja activa
@@ -44,14 +45,40 @@ for ($i = 2; $i <= $highestRow + 1; $i++) {
 
     $json = @file_get_contents('http://maps.googleapis.com/maps/api/geocode/json?address=Calle%20' . $stringUrl);
     if ($obj = @json_decode($json)) {
-        if (isset($obj->results[0])) {
-            $objPHPExcel->getActiveSheet()->setCellValue('L' . $i, isset($obj->results[0]->address_components[0]->long_name) ? $obj->results[0]->address_components[0]->long_name : '');
-            $objPHPExcel->getActiveSheet()->setCellValue('M' . $i, isset($obj->results[0]->address_components[1]->long_name) ? $obj->results[0]->address_components[1]->long_name : '');
-            $objPHPExcel->getActiveSheet()->setCellValue('N' . $i, isset($obj->results[0]->address_components[2]->long_name) ? $obj->results[0]->address_components[2]->long_name : '');
-            $objPHPExcel->getActiveSheet()->setCellValue('O' . $i, isset($obj->results[0]->address_components[3]->long_name) ? $obj->results[0]->address_components[3]->long_name : '');
-            $objPHPExcel->getActiveSheet()->setCellValue('P' . $i, isset($obj->results[0]->address_components[4]->long_name) ? $obj->results[0]->address_components[4]->long_name : '');
-            $objPHPExcel->getActiveSheet()->setCellValue('Q' . $i, isset($obj->results[0]->address_components[5]->long_name) ? $obj->results[0]->address_components[5]->long_name : '');
-            $objPHPExcel->getActiveSheet()->setCellValue('R' . $i, isset($obj->results[0]->address_components[6]->long_name) ? $obj->results[0]->address_components[6]->long_name : '');
+        if (isset($obj->results[0]->address_components)) {
+            foreach ($obj->results[0]->address_components as $component) {
+                $string = $component->types [0];
+                switch ($string) {
+                    case 'street_number':
+                        $objPHPExcel->getActiveSheet()->setCellValue('L' . $i, isset($component->long_name) ? $component->long_name : '' );
+                        break;
+                    case 'route':
+                        $objPHPExcel->getActiveSheet()->setCellValue('M' . $i, isset($component->long_name) ? $component->long_name : '' );
+                        break;
+                    case 'locality':
+                        $objPHPExcel->getActiveSheet()->setCellValue('O' . $i, isset($component->long_name) ? $component->long_name : '' );
+                        break;
+                    case 'administrative_area_level_2':
+                        $objPHPExcel->getActiveSheet()->setCellValue('N' . $i, isset($component->long_name) ? $component->long_name : '' );
+                        break;
+                    case 'administrative_area_level_1':
+                        $objPHPExcel->getActiveSheet()->setCellValue('P' . $i, isset($component->long_name) ? $component->long_name : '' );
+                        break;
+                    case 'country':
+                        $objPHPExcel->getActiveSheet()->setCellValue('Q' . $i, isset($component->long_name) ? $component->long_name : '' );
+                        break;
+                    case 'postal_code':
+                        $objPHPExcel->getActiveSheet()->setCellValue('R' . $i, isset($component->long_name) ? $component->long_name : '' );
+                        break;
+                }
+            }
+//            $objPHPExcel->getActiveSheet()->setCellValue('L' . $i, isset($obj->results[0]->address_components[0]->long_name) ? $obj->results[0]->address_components[0]->long_name : '');
+//            $objPHPExcel->getActiveSheet()->setCellValue('M' . $i, isset($obj->results[0]->address_components[1]->long_name) ? $obj->results[0]->address_components[1]->long_name : '');
+//            $objPHPExcel->getActiveSheet()->setCellValue('N' . $i, isset($obj->results[0]->address_components[2]->long_name) ? $obj->results[0]->address_components[2]->long_name : '');
+//            $objPHPExcel->getActiveSheet()->setCellValue('O' . $i, isset($obj->results[0]->address_components[3]->long_name) ? $obj->results[0]->address_components[3]->long_name : '');
+//            $objPHPExcel->getActiveSheet()->setCellValue('P' . $i, isset($obj->results[0]->address_components[4]->long_name) ? $obj->results[0]->address_components[4]->long_name : '');
+//            $objPHPExcel->getActiveSheet()->setCellValue('Q' . $i, isset($obj->results[0]->address_components[5]->long_name) ? $obj->results[0]->address_components[5]->long_name : '');
+//            $objPHPExcel->getActiveSheet()->setCellValue('R' . $i, isset($obj->results[0]->address_components[6]->long_name) ? $obj->results[0]->address_components[6]->long_name : '');
             $objPHPExcel->getActiveSheet()->setCellValue('S' . $i, isset($obj->results[0]->formatted_address) ? $obj->results[0]->formatted_address : '');
         }
     }

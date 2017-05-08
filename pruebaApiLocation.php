@@ -1,7 +1,7 @@
 <?php
 
-$direccion = 'AYACUCHO 3473';
-$localidad = 'LANUS ESTE';
+$direccion = 'PERU 960 18 A';
+$localidad = 'EL TALAR';
 $pais = 'Argentina';
 $direccion .= ' ' . $localidad . ' ' . $pais;
 
@@ -29,8 +29,46 @@ $obj = json_decode($json);
 //print_r($obj->results[0]->address_components[0]->long_name);
 //die();
 if (isset($obj->results[0])) {
-    
-        print_r($obj->results);
+    print_r($obj->results[0]);
+    die();
+}
+if (isset($obj->results[0]->address_components)) {
+        foreach($obj->results[0]->address_components as $component){
+            $string = $component->types [0];
+            switch ($string){
+                case 'street_number': 
+                    echo 'Numero de calle: ';
+                    echo isset($component->long_name)?$component->long_name:'';
+                    echo '<br/>';
+                    break;
+                case 'route': 
+                    echo 'Nombre de calle: ';
+                    echo isset($component->long_name)?$component->long_name:'';
+                    echo '<br/>';
+                    break;
+                case 'locality': 
+                    echo 'Localidad: ';
+                    echo isset($component->long_name)?$component->long_name:'';
+                    echo '<br/>';
+                    break;
+                case 'administrative_area_level_2': 
+                    echo 'Partido: ';
+                    echo isset($component->long_name)?$component->long_name:'';
+                    echo '<br/>';
+                    break;
+                case 'administrative_area_level_1': 
+                    echo 'Provincia: ';
+                    echo isset($component->long_name)?$component->long_name:'';
+                    echo '<br/>';
+                    break;
+                case 'country': 
+                    echo 'Pais: ';
+                    echo isset($component->long_name)?$component->long_name:'';
+                    echo '<br/>';
+                    break;
+            }
+        }
+        //print_r($obj->results[0]->address_components);
 } else {
     echo "no se encontraron resultados";
 }
